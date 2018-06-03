@@ -11,41 +11,126 @@ const context = canvas.getContext('2d');
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
 
-const gridSize = 3;
+const gridSize = 5;
 
 const tileHeight = (canvasHeight/gridSize);
 const tileWidth = (canvasWidth/gridSize);
 
 const lineWidth = tileWidth * 0.8;
 
-while(true)
+const route = getLabyrinthRoute();
+drawLabyrinthRoute(route);
+
+function getLabyrinthRoute()
 {
-  // Initialize the grid
-  let grid = [];
-
-  for(let y = 0; y < gridSize; y++)
+  const totalTileCount = (gridSize * gridSize);
+  while(true)
   {
-    grid[y] = new Array(gridSize);
-  }
+    // Initialize the grid
+    let grid = [];
 
-  // Draw the grid
+    for(let y = 0; y < gridSize; y++)
+    {
+      grid[y] = new Array(gridSize);
+    }
+
+    let currTileIndex = 0;
+    let x = 0;
+    let y = 0;
+
+    while(true)
+    {
+      grid[y][x] = currTileIndex;
+      currTileIndex++;
+
+      let hasFoundPath = false;
+
+      getRandomDirectionList().forEach((direction) => {
+
+        if(hasFoundPath)
+        {
+          return;
+        }
+
+        switch(direction)
+        {
+          case Direction.Top:
+            if(x > 0 && typeof(grid[y][x - 1]) === 'undefined')
+            {
+              x = x - 1;
+              hasFoundPath = true;
+              return;
+            }
+
+          case Direction.Bottom:
+            if(x < (gridSize - 1) && typeof(grid[y][x + 1]) === 'undefined')
+            {
+              x = x + 1;
+              hasFoundPath = true;
+              return;
+            }
+
+          case Direction.Left:
+            if(y < (gridSize - 1) && typeof(grid[y + 1][x]) === 'undefined')
+            {
+              y = y + 1;
+              hasFoundPath = true;
+              return;
+            }
+
+          case Direction.Right:
+            if(y > 0 && typeof(grid[y - 1][x]) === 'undefined')
+            {
+              y = y - 1;
+              hasFoundPath = true;
+              return;
+            }
+        }
+
+      });
+
+      if(hasFoundPath)
+      {
+        continue;
+      }
+
+      if(!hasFoundPath)
+      {
+        break;
+      }
+
+    }
+
+    // Did we cover the entire grid?
+    if(currTileIndex >= totalTileCount)
+    {
+      return grid;
+    }
+  }
+}
+
+function drawLabyrinthRoute(route)
+{
   context.lineWidth = lineWidth;
   context.lineCap = 'round';
   context.beginPath();
 
+  const startCoords = locateRouteStartCoords(route);
+
+  let nextTileIndex = 0;
   let x = 0;
   let y = 0;
+
   while(true)
   {
-    // Draw the line
+    nextTileIndex++;
     let middleX = (x * tileWidth) + (tileWidth/2);
     let middleY = (y * tileHeight) + (tileHeight/2);
     context.lineTo(middleX, middleY);
     context.moveTo(middleX, middleY);
 
-    grid[y][x] = true;
-
     let hasFoundPath = false;
+
     getRandomDirectionList().forEach((direction) => {
 
       if(hasFoundPath)
@@ -56,7 +141,7 @@ while(true)
       switch(direction)
       {
         case Direction.Top:
-          if(x > 0 && !grid[y][x - 1])
+          if(x > 0 && route[y][x - 1] === nextTileIndex)
           {
             x = x - 1;
             hasFoundPath = true;
@@ -64,7 +149,7 @@ while(true)
           }
 
         case Direction.Bottom:
-          if(x < (gridSize - 1) && !grid[y][x + 1])
+          if(x < (gridSize - 1) && route[y][x + 1] === nextTileIndex)
           {
             x = x + 1;
             hasFoundPath = true;
@@ -72,7 +157,7 @@ while(true)
           }
 
         case Direction.Left:
-          if(y < (gridSize - 1) && !grid[y + 1][x])
+          if(y < (gridSize - 1) && route[y + 1][x] === nextTileIndex)
           {
             y = y + 1;
             hasFoundPath = true;
@@ -80,7 +165,7 @@ while(true)
           }
 
         case Direction.Right:
-          if(y > 0 && !grid[y - 1][x])
+          if(y > 0 && route[y - 1][x] === nextTileIndex)
           {
             y = y - 1;
             hasFoundPath = true;
@@ -99,28 +184,23 @@ while(true)
     {
       break;
     }
-
   }
 
-  // Calculate coverage
-  let tileCount = 0;
-  for(let y = 0; y < gridSize; y++)
+  context.stroke();
+}
+
+function locateRouteStartCoords(route)
+{
+  for(let y = 0; y < route.length; y++)
   {
-    for(let x = 0; x < gridSize; x++)
+    for(let x = 0; x < route[y].length; x++)
     {
-      if(grid[y][x])
+      if(route[y][x] === 0)
       {
-        tileCount++;
+        return { x, y };
       }
     }
   }
-
-  if((tileCount / (gridSize * gridSize)) === 1)
-  {
-    break;
-  }
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function getRandomDirectionList()
@@ -145,5 +225,3 @@ function shuffle(a)
     }
     return a;
 }
-
-context.stroke();
