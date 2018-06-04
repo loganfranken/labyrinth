@@ -11,17 +11,34 @@ const context = canvas.getContext('2d');
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
 
-const gridSize = 5;
+const sectionSize = 5;
+const gridSize = 15;
 
-const tileHeight = (canvasHeight/gridSize);
-const tileWidth = (canvasWidth/gridSize);
+buildLabyrinth();
 
-const lineWidth = tileWidth * 0.8;
+function buildLabyrinth()
+{
+  const tileHeight = (canvasHeight/gridSize);
+  const tileWidth = (canvasWidth/gridSize);
 
-const route = getLabyrinthRoute();
-drawLabyrinthRoute(route);
+  const sectionCount = (gridSize/sectionSize);
 
-function getLabyrinthRoute()
+  for(i = 0; i < sectionCount; i++)
+  {
+    for(j = 0; j < sectionCount; j++)
+    {
+      //let startX = Math.floor(gridSize/2);
+      //let startY = Math.floor(gridSize/2);
+      let startX = 0;
+      let startY = 0;
+
+      let route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+      drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (i * sectionSize * tileWidth), y: (j * sectionSize * tileHeight) });
+    }
+  }
+}
+
+function getLabyrinthRoute(startCoords, gridSize)
 {
   const totalTileCount = (gridSize * gridSize);
   while(true)
@@ -35,8 +52,8 @@ function getLabyrinthRoute()
     }
 
     let currTileIndex = 0;
-    let x = 0;
-    let y = 0;
+    let x = startCoords.x;
+    let y = startCoords.y;
 
     while(true)
     {
@@ -109,23 +126,24 @@ function getLabyrinthRoute()
   }
 }
 
-function drawLabyrinthRoute(route)
+function drawLabyrinthRoute(route, gridSize, tileWidth, tileHeight, position)
 {
-  context.lineWidth = lineWidth;
+  context.lineWidth = tileWidth * 0.8;
   context.lineCap = 'round';
+  context.strokeStyle = '#ccc';
   context.beginPath();
 
   const startCoords = locateRouteStartCoords(route);
 
   let nextTileIndex = 0;
-  let x = 0;
-  let y = 0;
+  let x = startCoords.x;
+  let y = startCoords.y;
 
   while(true)
   {
     nextTileIndex++;
-    let middleX = (x * tileWidth) + (tileWidth/2);
-    let middleY = (y * tileHeight) + (tileHeight/2);
+    let middleX = ((x * tileWidth) + (tileWidth/2)) + position.x;
+    let middleY = ((y * tileHeight) + (tileHeight/2)) + position.y;
     context.lineTo(middleX, middleY);
     context.moveTo(middleX, middleY);
 
