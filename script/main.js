@@ -23,19 +23,83 @@ function buildLabyrinth()
 
   const sectionCount = (gridSize/sectionSize);
 
-  for(i = 0; i < sectionCount; i++)
-  {
-    for(j = 0; j < sectionCount; j++)
-    {
-      //let startX = Math.floor(gridSize/2);
-      //let startY = Math.floor(gridSize/2);
-      let startX = 0;
-      let startY = 0;
+  let route = null;
+  let startX = 0;
+  let startY = 0;
+  let sectionX = null;
+  let sectionY = null;
 
-      let route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-      drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (i * sectionSize * tileWidth), y: (j * sectionSize * tileHeight) });
-    }
-  }
+  // 000
+  // 0X0
+  // 000
+  sectionX = 1;
+  sectionY = 1;
+  route = getLabyrinthRoute({ x: Math.floor(sectionSize/2), y: Math.floor(sectionSize/2) }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+
+  // 000
+  // 00X
+  // 000
+  sectionX = 2;
+  sectionY = 1;
+  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+
+  // 000
+  // 000
+  // 00X
+  sectionX = 2;
+  sectionY = 2;
+  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+
+  // 000
+  // 000
+  // 0X0
+  sectionX = 1;
+  sectionY = 2;
+  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+
+  // 000
+  // 000
+  // X00
+  sectionX = 0;
+  sectionY = 2;
+  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+
+  // 000
+  // X00
+  // 000
+  sectionX = 0;
+  sectionY = 1;
+  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+
+  // X00
+  // 000
+  // 000
+  sectionX = 0;
+  sectionY = 0;
+  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+
+  // 0X0
+  // 000
+  // 000
+  sectionX = 1;
+  sectionY = 0;
+  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+
+  // 00X
+  // 000
+  // 000
+  sectionX = 2;
+  sectionY = 0;
+  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
+  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
 }
 
 function getLabyrinthRoute(startCoords, gridSize)
