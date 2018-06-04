@@ -11,13 +11,13 @@ const context = canvas.getContext('2d');
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
 
-const sectionSize = 5;
-const gridSize = 15;
-
 buildLabyrinth();
 
 function buildLabyrinth()
 {
+  const sectionSize = 5;
+  const gridSize = 15;
+
   const tileHeight = (canvasHeight/gridSize);
   const tileWidth = (canvasWidth/gridSize);
 
@@ -26,80 +26,94 @@ function buildLabyrinth()
   let route = null;
   let startX = 0;
   let startY = 0;
-  let sectionX = null;
-  let sectionY = null;
+  let sectionX = 1;
+  let sectionY = 1;
 
-  // 000
-  // 0X0
-  // 000
-  sectionX = 1;
-  sectionY = 1;
-  route = getLabyrinthRoute({ x: Math.floor(sectionSize/2), y: Math.floor(sectionSize/2) }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+  while(true)
+  {
+    route = getLabyrinthRoute({ x: Math.floor(sectionSize/2), y: Math.floor(sectionSize/2) }, sectionSize);
+    drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
 
-  // 000
-  // 00X
-  // 000
-  sectionX = 2;
-  sectionY = 1;
-  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    // 000
+    // 0X0
+    // 000
+    if(sectionX === 1 && sectionY === 1)
+    {
+      sectionX = 2;
+      continue;
+    }
 
-  // 000
-  // 000
-  // 00X
-  sectionX = 2;
-  sectionY = 2;
-  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    // 000
+    // 00X
+    // 000
+    if(sectionX === 2 && sectionY === 1)
+    {
+      sectionY = 2;
+      continue;
+    }
 
-  // 000
-  // 000
-  // 0X0
-  sectionX = 1;
-  sectionY = 2;
-  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    // 000
+    // 000
+    // 00X
+    if(sectionX === 2 && sectionY === 2)
+    {
+      sectionX = 1;
+      continue;
+    }
 
-  // 000
-  // 000
-  // X00
-  sectionX = 0;
-  sectionY = 2;
-  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    // 000
+    // 000
+    // 0X0
+    if(sectionX === 1 && sectionY === 2)
+    {
+      sectionX = 0;
+      continue;
+    }
 
-  // 000
-  // X00
-  // 000
-  sectionX = 0;
-  sectionY = 1;
-  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    // 000
+    // 000
+    // X00
+    if(sectionX === 0 && sectionY === 2)
+    {
+      sectionY = 1;
+      continue;
+    }
 
-  // X00
-  // 000
-  // 000
-  sectionX = 0;
-  sectionY = 0;
-  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    // 000
+    // X00
+    // 000
+    if(sectionX === 0 && sectionY === 1)
+    {
+      sectionY = 0;
+      continue;
+    }
 
-  // 0X0
-  // 000
-  // 000
-  sectionX = 1;
-  sectionY = 0;
-  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    // X00
+    // 000
+    // 000
+    if(sectionX === 0 && sectionY === 0)
+    {
+      sectionX = 1;
+      continue;
+    }
 
-  // 00X
-  // 000
-  // 000
-  sectionX = 2;
-  sectionY = 0;
-  route = getLabyrinthRoute({ x: startX, y: startY }, sectionSize);
-  drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    // 0X0
+    // 000
+    // 000
+    if(sectionX === 1 && sectionY === 0)
+    {
+      sectionX = 2;
+      continue;
+    }
+
+    // 00X
+    // 000
+    // 000
+    if(sectionX === 2 && sectionY === 0)
+    {
+      break;
+    }
+  }
 }
 
 function getLabyrinthRoute(startCoords, gridSize)
