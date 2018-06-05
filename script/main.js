@@ -31,8 +31,8 @@ function buildLabyrinth()
 
   while(true)
   {
-    route = getLabyrinthRoute({ x: Math.floor(sectionSize/2), y: Math.floor(sectionSize/2) }, sectionSize);
-    drawLabyrinthRoute(route, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    routeInfo = getLabyrinthRoute({ x: Math.floor(sectionSize/2), y: Math.floor(sectionSize/2) }, sectionSize);
+    drawLabyrinthRoute(routeInfo, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
 
     // 000
     // 0X0
@@ -199,23 +199,26 @@ function getLabyrinthRoute(startCoords, gridSize)
     // Did we cover the entire grid?
     if(currTileIndex >= totalTileCount)
     {
-      return grid;
+      return {
+        grid,
+        start: startCoords,
+        end: { x, y }
+      };
     }
   }
 }
 
-function drawLabyrinthRoute(route, gridSize, tileWidth, tileHeight, position)
+function drawLabyrinthRoute(routeInfo, gridSize, tileWidth, tileHeight, position)
 {
   context.lineWidth = tileWidth * 0.8;
   context.lineCap = 'round';
   context.strokeStyle = '#ccc';
   context.beginPath();
 
-  const startCoords = locateRouteStartCoords(route);
-
   let nextTileIndex = 0;
-  let x = startCoords.x;
-  let y = startCoords.y;
+  let route = routeInfo.grid;
+  let x = routeInfo.start.x;
+  let y = routeInfo.start.y;
 
   while(true)
   {
@@ -283,20 +286,6 @@ function drawLabyrinthRoute(route, gridSize, tileWidth, tileHeight, position)
   }
 
   context.stroke();
-}
-
-function locateRouteStartCoords(route)
-{
-  for(let y = 0; y < route.length; y++)
-  {
-    for(let x = 0; x < route[y].length; x++)
-    {
-      if(route[y][x] === 0)
-      {
-        return { x, y };
-      }
-    }
-  }
 }
 
 function getRandomDirectionList()
