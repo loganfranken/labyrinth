@@ -24,14 +24,15 @@ function buildLabyrinth()
   const sectionCount = (gridSize/sectionSize);
 
   let route = null;
-  let startX = 0;
-  let startY = 0;
+  let startX = Math.floor(sectionSize/2);
+  let startY = Math.floor(sectionSize/2);
   let sectionX = 1;
   let sectionY = 1;
+  let exitDirection = Direction.Right;
 
   while(true)
   {
-    routeInfo = getLabyrinthRoute({ x: Math.floor(sectionSize/2), y: Math.floor(sectionSize/2) }, sectionSize);
+    routeInfo = getLabyrinthRoute({ x: startX, y: startY }, sectionSize, exitDirection);
     drawLabyrinthRoute(routeInfo, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
 
     // 000
@@ -39,6 +40,9 @@ function buildLabyrinth()
     // 000
     if(sectionX === 1 && sectionY === 1)
     {
+      exitDirection = Direction.Bottom;
+      startX = (-routeInfo.end.x) + (sectionSize - 1);
+      startY = routeInfo.end.y;
       sectionX = 2;
       continue;
     }
@@ -48,6 +52,9 @@ function buildLabyrinth()
     // 000
     if(sectionX === 2 && sectionY === 1)
     {
+      exitDirection = Direction.Left;
+      startX = routeInfo.end.x;
+      startY = (-routeInfo.end.y) + (sectionSize - 1);
       sectionY = 2;
       continue;
     }
@@ -57,6 +64,9 @@ function buildLabyrinth()
     // 00X
     if(sectionX === 2 && sectionY === 2)
     {
+      exitDirection = Direction.Left;
+      startX = (-routeInfo.end.x) + (sectionSize - 1);
+      startY = routeInfo.end.y;
       sectionX = 1;
       continue;
     }
@@ -66,6 +76,9 @@ function buildLabyrinth()
     // 0X0
     if(sectionX === 1 && sectionY === 2)
     {
+      exitDirection = Direction.Top;
+      startX = (-routeInfo.end.x) + (sectionSize - 1);
+      startY = routeInfo.end.y;
       sectionX = 0;
       continue;
     }
@@ -75,6 +88,9 @@ function buildLabyrinth()
     // X00
     if(sectionX === 0 && sectionY === 2)
     {
+      exitDirection = Direction.Top;
+      startX = routeInfo.end.x;
+      startY = (-routeInfo.end.y) + (sectionSize - 1);
       sectionY = 1;
       continue;
     }
@@ -84,6 +100,9 @@ function buildLabyrinth()
     // 000
     if(sectionX === 0 && sectionY === 1)
     {
+      exitDirection = Direction.Right;
+      startX = routeInfo.end.x;
+      startY = (-routeInfo.end.y) + (sectionSize - 1);
       sectionY = 0;
       continue;
     }
@@ -93,6 +112,9 @@ function buildLabyrinth()
     // 000
     if(sectionX === 0 && sectionY === 0)
     {
+      exitDirection = Direction.Right;
+      startX = (-routeInfo.end.x) + (sectionSize - 1);
+      startY = routeInfo.end.y;
       sectionX = 1;
       continue;
     }
@@ -102,6 +124,9 @@ function buildLabyrinth()
     // 000
     if(sectionX === 1 && sectionY === 0)
     {
+      exitDirection = Direction.Right;
+      startX = (-routeInfo.end.x) + (sectionSize - 1);
+      startY = routeInfo.end.y;
       sectionX = 2;
       continue;
     }
@@ -116,7 +141,7 @@ function buildLabyrinth()
   }
 }
 
-function getLabyrinthRoute(startCoords, gridSize)
+function getLabyrinthRoute(startCoords, gridSize, exitDirection)
 {
   const totalTileCount = (gridSize * gridSize);
   while(true)
@@ -197,10 +222,29 @@ function getLabyrinthRoute(startCoords, gridSize)
     }
 
     var isCovered = (currTileIndex >= totalTileCount);
-    var hasReachedEdge = (x === 0 || x === (gridSize - 1) || y === 0 || y === (gridSize - 1));
+    var hasReachedExit = false;
+
+    switch(exitDirection)
+    {
+      case Direction.Top:
+        hasReachedExit = (y === 0);
+        break;
+
+      case Direction.Bottom:
+        hasReachedExit = (y === (gridSize - 1));
+        break;
+
+      case Direction.Left:
+        hasReachedExit = (x === 0);
+        break;
+
+      case Direction.Right:
+        hasReachedExit = (x === (gridSize - 1));
+        break;
+    }
 
     // Did we cover the entire grid?
-    if(isCovered && hasReachedEdge)
+    if(isCovered && hasReachedExit)
     {
       return {
         grid,
