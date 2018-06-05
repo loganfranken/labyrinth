@@ -23,17 +23,37 @@ function buildLabyrinth()
 
   const sectionCount = (gridSize/sectionSize);
 
-  let route = null;
+  let labyrinth = new Array(sectionSize * 3);
+
+  let startIndex = 0;
   let startX = Math.floor(sectionSize/2);
   let startY = Math.floor(sectionSize/2);
+
   let sectionX = 1;
   let sectionY = 1;
+
   let exitDirection = Direction.Right;
 
   while(true)
   {
-    routeInfo = getLabyrinthRoute({ x: startX, y: startY }, sectionSize, exitDirection);
-    drawLabyrinthRoute(routeInfo, sectionSize, tileWidth, tileHeight, { x: (sectionX * sectionSize * tileWidth), y: (sectionY * sectionSize * tileHeight) });
+    routeInfo = getLabyrinthRoute({ x: startX, y: startY }, sectionSize, exitDirection, startIndex);
+    startIndex += (sectionSize * sectionSize);
+
+    let yOffset = (sectionY * sectionSize);
+    let xOffset = (sectionX * sectionSize);
+
+    for(let y = 0; y < routeInfo.grid.length; y++)
+    {
+      if(typeof(labyrinth[yOffset + y]) === 'undefined')
+      {
+        labyrinth[yOffset + y] = new Array(sectionSize * 3);
+      }
+
+      for(let x = 0; x < routeInfo.grid[y].length; x++)
+      {
+        labyrinth[yOffset + y][xOffset + x] = routeInfo.grid[y][x];
+      }
+    }
 
     // 000
     // 0X0
@@ -139,9 +159,16 @@ function buildLabyrinth()
       break;
     }
   }
+
+  let labyrinthInfo = {
+    grid: labyrinth,
+    start: { x: Math.floor(gridSize/2), y: Math.floor(gridSize/2) }
+  };
+
+  drawLabyrinthRoute(labyrinthInfo, gridSize, tileWidth, tileHeight, { x: 0, y: 0 });
 }
 
-function getLabyrinthRoute(startCoords, gridSize, exitDirection)
+function getLabyrinthRoute(startCoords, gridSize, exitDirection, startIndex)
 {
   const totalTileCount = (gridSize * gridSize);
   while(true)
@@ -154,7 +181,7 @@ function getLabyrinthRoute(startCoords, gridSize, exitDirection)
       grid[y] = new Array(gridSize);
     }
 
-    let currTileIndex = 0;
+    let currTileIndex = startIndex;
     let x = startCoords.x;
     let y = startCoords.y;
 
@@ -221,7 +248,7 @@ function getLabyrinthRoute(startCoords, gridSize, exitDirection)
 
     }
 
-    var isCovered = (currTileIndex >= totalTileCount);
+    var isCovered = (currTileIndex >= (totalTileCount + startIndex));
     var hasReachedExit = false;
 
     switch(exitDirection)
@@ -259,7 +286,7 @@ function drawLabyrinthRoute(routeInfo, gridSize, tileWidth, tileHeight, position
 {
   context.lineWidth = tileWidth * 0.8;
   context.lineCap = 'round';
-  context.strokeStyle = '#ccc';
+  context.strokeStyle = '#ddd';
   context.beginPath();
 
   let nextTileIndex = 0;
