@@ -196,8 +196,11 @@ function getLabyrinthRoute(startCoords, gridSize)
 
     }
 
+    var isCovered = (currTileIndex >= totalTileCount);
+    var hasReachedEdge = (x === 0 || x === (gridSize - 1) || y === 0 || y === (gridSize - 1));
+
     // Did we cover the entire grid?
-    if(currTileIndex >= totalTileCount)
+    if(isCovered && hasReachedEdge)
     {
       return {
         grid,
